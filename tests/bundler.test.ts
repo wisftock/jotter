@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { bundleForBrowser } from '../src/main/bundler'
 
-const workspace = mkdtempSync(join(tmpdir(), 'wisfjs-bundle-'))
+const workspace = mkdtempSync(join(tmpdir(), 'jotter-bundle-'))
 
 afterAll(() => rmSync(workspace, { recursive: true, force: true }))
 
@@ -12,7 +12,7 @@ describe('bundleForBrowser', () => {
   it('bundles a plain snippet into an IIFE with the log hook', async () => {
     const result = await bundleForBrowser('1 + 1', 'javascript', workspace)
     expect(result.ok).toBe(true)
-    expect(result.code).toContain('__WISF_LOG__')
+    expect(result.code).toContain('__JOTTER_LOG__')
   })
 
   it('reports the missing package from a bundle error', async () => {

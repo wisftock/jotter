@@ -81,9 +81,9 @@ export class Executor {
     g.require = req
     g.__dirname = this.workspace
     g.__filename = join(this.workspace, 'snippet.js')
-    g.__WISF_LOG__ = (value: unknown, label?: string, auto?: boolean): void =>
+    g.__JOTTER_LOG__ = (value: unknown, label?: string, auto?: boolean): void =>
       this.emitLog(value, label, auto === true)
-    g.__WISF_RESULT__ = undefined
+    g.__JOTTER_RESULT__ = undefined
 
     const levels: Array<'log' | 'info' | 'warn' | 'error' | 'debug'> = [
       'log',
@@ -104,7 +104,7 @@ export class Executor {
     const started = Date.now()
     const { id, code, language } = message
     this.activeRunId = id
-    const runDir = join(this.workspace, '.wisfjs')
+    const runDir = join(this.workspace, '.jotter')
     mkdirSync(runDir, { recursive: true })
     const file = join(runDir, `run-${id || randomUUID()}.mjs`)
 
@@ -112,12 +112,12 @@ export class Executor {
       const js = transpile(code, language)
       writeFileSync(file, transformCode(js), 'utf8')
 
-      ;(globalThis as Record<string, unknown>).__WISF_RESULT__ = undefined
+      ;(globalThis as Record<string, unknown>).__JOTTER_RESULT__ = undefined
       process.setSourceMapsEnabled?.(true)
 
       await import(`${pathToFileURL(file).href}?v=${Date.now()}`)
 
-      const result = (globalThis as Record<string, unknown>).__WISF_RESULT__
+      const result = (globalThis as Record<string, unknown>).__JOTTER_RESULT__
       if (result !== undefined) this.emitLog(result)
 
       this.send({ type: 'result', id, ok: true, duration: Date.now() - started })

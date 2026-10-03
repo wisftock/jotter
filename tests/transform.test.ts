@@ -10,14 +10,14 @@ interface Evaluated {
 function evaluate(source: string): Evaluated {
   const logs: Array<{ value: unknown; label?: string }> = []
   const context = vm.createContext({
-    __WISF_LOG__: (value: unknown, label?: string, auto?: boolean): void => {
+    __JOTTER_LOG__: (value: unknown, label?: string, auto?: boolean): void => {
       if (auto && value === undefined) return
       logs.push({ value, label })
     },
-    __WISF_RESULT__: undefined
+    __JOTTER_RESULT__: undefined
   })
   vm.runInContext(transformCode(source), context)
-  return { logs, result: context.__WISF_RESULT__ }
+  return { logs, result: context.__JOTTER_RESULT__ }
 }
 
 describe('transformCode', () => {

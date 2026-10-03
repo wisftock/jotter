@@ -17,7 +17,7 @@ const BOOTSTRAP = `<!doctype html>
 <script>
 (function () {
   function send(msg) {
-    try { parent.postMessage(Object.assign({ source: 'wisfjs-browser' }, msg), '*') } catch (e) {}
+    try { parent.postMessage(Object.assign({ source: 'jotter-browser' }, msg), '*') } catch (e) {}
   }
   function stringify(value) {
     var seen = new WeakSet();
@@ -65,7 +65,7 @@ const BOOTSTRAP = `<!doctype html>
   window.onunhandledrejection = function (event) {
     send({ type: 'error', error: serializeError(event.reason) });
   };
-  globalThis.__WISF_LOG__ = function (value, label, auto) {
+  globalThis.__JOTTER_LOG__ = function (value, label, auto) {
     if (auto && value === undefined) return;
     send({ type: 'log', level: 'result', text: fmt(value), label: label });
   };
@@ -88,13 +88,13 @@ const BOOTSTRAP = `<!doctype html>
     } catch (e) {}
   }
   function execute(code) {
-    globalThis.__WISF_RESULT__ = undefined;
+    globalThis.__JOTTER_RESULT__ = undefined;
     try { window.scrollTo(0, 0); } catch (e) {}
     try {
       if (/\\bawait\\b/.test(code)) {
         var fn = new Function('"use strict"; return (async function () {\\n' + code + '\\n})()');
         Promise.resolve(fn()).then(function (v) {
-          var result = globalThis.__WISF_RESULT__;
+          var result = globalThis.__JOTTER_RESULT__;
           if (result === undefined) result = v;
           if (result !== undefined) send({ type: 'log', level: 'result', text: fmt(result) });
           send({ type: 'done' });
@@ -106,7 +106,7 @@ const BOOTSTRAP = `<!doctype html>
         });
       } else {
         var value = (0, eval)(code);
-        var result = globalThis.__WISF_RESULT__;
+        var result = globalThis.__JOTTER_RESULT__;
         if (result === undefined) result = value;
         if (result !== undefined) send({ type: 'log', level: 'result', text: fmt(result) });
         send({ type: 'done' });
@@ -130,7 +130,7 @@ const BOOTSTRAP = `<!doctype html>
   setTimeout(reportHeight, 0);
   window.addEventListener('message', function (event) {
     var data = event.data;
-    if (!data || data.source !== 'wisfjs-host') return;
+    if (!data || data.source !== 'jotter-host') return;
     execute(data.code);
   });
 })();
@@ -153,7 +153,7 @@ export class BrowserRunner {
     this.iframe.className = 'webview-frame'
     window.addEventListener('message', this.onMessage)
 
-    const slot = document.getElementById('wisfjs-webview')
+    const slot = document.getElementById('jotter-webview')
     ;(slot ?? document.body).appendChild(this.iframe)
   }
 
@@ -168,7 +168,7 @@ export class BrowserRunner {
       height?: number
       error?: RunError
     }
-    if (!data || data.source !== 'wisfjs-browser') return
+    if (!data || data.source !== 'jotter-browser') return
     if (data.type === 'resize') {
       this.applyHeight(typeof data.height === 'number' ? data.height : 0)
       return
@@ -192,7 +192,7 @@ export class BrowserRunner {
 
   /** Resizes the web view slot to fit its content, bounded by the panel. */
   private applyHeight(contentHeight: number): void {
-    const slot = document.getElementById('wisfjs-webview')
+    const slot = document.getElementById('jotter-webview')
     if (!slot) return
     const parent = slot.parentElement
     const max = parent ? Math.max(120, parent.clientHeight - 44) : 480
@@ -214,7 +214,7 @@ export class BrowserRunner {
     const onLoad = (): void => {
       this.iframe.removeEventListener('load', onLoad)
       try {
-        this.iframe.contentWindow?.postMessage({ source: 'wisfjs-host', code: bundle }, '*')
+        this.iframe.contentWindow?.postMessage({ source: 'jotter-host', code: bundle }, '*')
       } catch {
         /* ignore */
       }

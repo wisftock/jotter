@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { SnippetStore } from '../src/main/snippets'
 import type { Snippet } from '../src/shared/types'
 
-const dir = mkdtempSync(join(tmpdir(), 'wisfjs-snippets-'))
+const dir = mkdtempSync(join(tmpdir(), 'jotter-snippets-'))
 const store = new SnippetStore(join(dir, 'snippets.json'))
 
 function make(id: string, name: string): Snippet {

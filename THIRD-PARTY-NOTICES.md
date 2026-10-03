@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-WisfJS bundles and/or depends on the following third-party software. Their
+JOTTER bundles and/or depends on the following third-party software. Their
 licenses are reproduced or referenced below. This file is provided to comply
 with those licenses.
 

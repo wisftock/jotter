@@ -33,11 +33,11 @@ function ensureWorkspace(dir: string): void {
       pkgPath,
       JSON.stringify(
         {
-          name: 'wisfjs-workspace',
+          name: 'jotter-workspace',
           version: '1.0.0',
           private: true,
           type: 'module',
-          description: 'Workspace used by WisfJS to install npm packages.'
+          description: 'Workspace used by JOTTER to install npm packages.'
         },
         null,
         2
@@ -50,7 +50,7 @@ function ensureWorkspace(dir: string): void {
 /** Removes only the temporary files produced while running snippets. */
 function cleanTemp(dir: string): void {
   try {
-    rmSync(join(dir, '.wisfjs'), { recursive: true, force: true })
+    rmSync(join(dir, '.jotter'), { recursive: true, force: true })
   } catch {
     /* ignore */
   }
@@ -90,7 +90,7 @@ function createWindow(): void {
     minHeight: 520,
     show: false,
     backgroundColor: '#17181c',
-    title: 'WisfJS',
+    title: 'JOTTER',
     autoHideMenuBar: true,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -122,7 +122,7 @@ function createWindow(): void {
         defaultId: 0,
         cancelId: 2,
         noLink: true,
-        title: 'WisfJS',
+        title: 'JOTTER',
         message: `You have ${installed.length} installed npm package(s).`,
         detail: `${installed.map((p) => p.name).join(', ')}\n\nKeep them for your next session, or delete everything?`
       })

@@ -8,10 +8,7 @@ variables:
 
 workflow:
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
-      when: never
-    - if: '$CI_COMMIT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == "main"'
     - if: '$CI_COMMIT_TAG'
 
 default:
@@ -39,7 +36,7 @@ package:linux:
     - npm ci
     - npm run build:linux:appimage
   artifacts:
-    name: "wisfjs-linux-$CI_COMMIT_REF_NAME"
+    name: "jotter-linux-$CI_COMMIT_REF_NAME"
     paths:
       - release/*.AppImage
     expire_in: 1 month
@@ -91,5 +88,5 @@ release:
     - echo "Creating release $CI_COMMIT_TAG"
   release:
     tag_name: "$CI_COMMIT_TAG"
-    name: "WisfJS $CI_COMMIT_TAG"
-    description: "WisfJS $CI_COMMIT_TAG"
+    name: "JOTTER $CI_COMMIT_TAG"
+    description: "JOTTER $CI_COMMIT_TAG"

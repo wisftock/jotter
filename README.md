@@ -1,53 +1,114 @@
-# WisfJS
+# JOTTER
 
-A fast, free and open-source desktop scratchpad for JavaScript, TypeScript, JSX
-and TSX. Sketch an idea, test a regex, hit an API or try a package — all without
-setting up a project.
+**A fast, free and open-source desktop scratchpad for JavaScript, TypeScript, JSX and TSX.**
 
-Live evaluation with **Node.js** and **browser** runtimes, npm packages and
-snippets. No license, no paywall.
+Sketch an idea, test a regex, hit an API or try a package — without setting up a project.
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![Platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20Windows%20%7C%20macOS-informational)](#installation)
+[![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white)](https://nodejs.org)
+[![Electron](https://img.shields.io/badge/Electron-44-47848F?logo=electron&logoColor=white)](https://www.electronjs.org)
+
+---
+
+JOTTER is a scratchpad: open it, type, and see results immediately. It runs your
+code live in both a **Node.js** and a **browser** runtime, installs npm packages
+on the fly, and saves reusable snippets. No account, no license, no paywall.
+
+## Table of contents
+
+- [Features](#features)
+- [Keyboard shortcuts](#keyboard-shortcuts)
+- [Environments](#environments)
+- [Installation](#installation)
+- [Development](#development)
+- [Build](#build)
+- [Releasing](#releasing)
+- [Project layout](#project-layout)
+- [Not affiliated](#not-affiliated)
+- [License](#license)
 
 ## Features
 
-- **Live evaluation** — code runs as you type (debounced), or press `Ctrl/Cmd + Enter`.
-- **Two environments**
-  - **Node.js**: full Node APIs, `require`/`import`, top-level `await` and npm packages.
-  - **Browser**: DOM and Web APIs, executed in a sandboxed frame.
+- **Live evaluation** — code runs as you type (debounced).
+- **Two environments** — a full Node.js runtime and a sandboxed browser runtime.
 - **Magic comments** — append `//?` to any line to print its value inline:
+
   ```js
   const doubled = [1, 2, 3].map((n) => n * 2)
   doubled //? doubled values
   ```
-- **Every expression** is evaluated and shown automatically, without labels.
+
+- **Every expression** is evaluated and shown automatically, no labels needed.
 - **Multiple work tabs** — several independent sessions open from the start
   (double-click a tab to rename, `+` to add, `×` to close).
-- **Languages** — JavaScript, TypeScript, JSX and TSX. JSX/TSX use the
-  automatic React runtime (no `import React` needed).
+- **Languages** — JavaScript, TypeScript, JSX and TSX. JSX/TSX use the automatic
+  React runtime, so no `import React` is required.
 - **Web View** — mount React apps into a sandboxed preview with a `#root`
-  element. Install `react` and `react-dom`, pick a JSX/TSX language, a Browser
+  element. Install `react` and `react-dom`, choose JSX/TSX + the Browser
   environment, and enable **Web View**:
+
   ```jsx
   import { createRoot } from 'react-dom/client'
 
   function App() {
-    return <h1>Hello from WisfJS</h1>
+    return <h1>Hello from JOTTER</h1>
   }
 
   createRoot(document.getElementById('root')).render(<App />)
   ```
+
 - **npm in the browser** — the Browser environment bundles your snippet with
-  esbuild so packages like React, styled-components, etc. work there too.
-- **npm packages** — install packages from the Packages panel; the npm CLI ships
-  with the app, so no system Node.js is required.
+  esbuild, so packages like React or styled-components work there too.
+- **npm packages** — install from the Packages panel; the npm CLI ships with the
+  app, so no system Node.js is required.
 - **Snippets** — save and reopen code fragments.
-- **Self-cleaning (with a choice)** — temporary files are always removed. When
-  you close the app it asks whether to keep or delete the installed npm
-  packages, so your work is only discarded when you want it to be.
+- **Self-cleaning (with a choice)** — temporary files are always removed, and on
+  exit JOTTER asks whether to keep or delete the installed npm packages, so your
+  work is only discarded when you want it to be.
 
-## Requirements
+## Keyboard shortcuts
 
-- To run from source: Node.js 20+.
-- To use the packaged app: none.
+| Shortcut | Action |
+| --- | --- |
+| `Ctrl/Cmd + Enter` | Run the current tab |
+| `Enter` | Confirm rename, save snippet or install package |
+| `Escape` | Cancel a tab rename |
+
+## Environments
+
+| | Node.js | Browser |
+| --- | --- | --- |
+| Node APIs (`require`/`import`) | Yes | No |
+| DOM & Web APIs | No | Yes |
+| Top-level `await` | Yes | Yes |
+| npm packages | Yes | Yes (bundled with esbuild) |
+| Web View preview | No | Yes |
+
+## Installation
+
+### Prebuilt packages
+
+Grab the artifact for your platform from the releases page:
+
+| Platform | Format |
+| --- | --- |
+| Linux | `.AppImage`, `.deb` |
+| Windows | NSIS `.exe` installer |
+| macOS | `.dmg` |
+
+```bash
+# Linux AppImage
+chmod +x JOTTER-*.AppImage && ./JOTTER-*.AppImage
+
+# Linux Debian/Ubuntu
+sudo apt install ./jotter_*.deb
+```
+
+### From source
+
+See [Development](#development) below. The packaged app requires nothing else;
+running from source requires Node.js 20+.
 
 ## Development
 
@@ -56,6 +117,7 @@ npm install
 npm run dev        # start with hot reload
 npm run typecheck  # type-check main, preload and renderer
 npm test           # run the test suite (Vitest)
+npm run test:watch # tests in watch mode
 ```
 
 ## Build
@@ -78,12 +140,10 @@ built from Linux (Windows needs Wine); macOS builds must run on macOS.
 
 ### CI
 
-`.gitlab-ci.yml` runs type-check, tests and build on every push/MR. On a tag it
-packages the Linux AppImage automatically and creates a GitLab **Release**;
-Windows/macOS packaging jobs run on self-hosted runners tagged `windows`/`macos`.
-
-GitHub Actions workflows are also provided under `.github/workflows/` in case
-the project is mirrored to GitHub (delete `.github/` if you only use GitLab).
+The GitLab pipeline (`.gitlab-ci.yml`) runs type-check, tests and build on
+pushes to `main`, and on tags it packages the Linux AppImage automatically and
+creates a GitLab **Release**. Windows/macOS packaging jobs run on self-hosted
+runners tagged `windows`/`macos`.
 
 ### Bump the version
 
@@ -98,11 +158,10 @@ the packaging/release jobs.
 
 ### Code signing (optional but recommended)
 
-Set these as **CI/CD variables** in GitLab (or repository secrets on GitHub).
-Without them the builds are unsigned: macOS users will hit Gatekeeper and
-Windows users will see SmartScreen warnings.
+Set these as **CI/CD variables** in GitLab. Without them builds are unsigned:
+macOS users will hit Gatekeeper and Windows users will see SmartScreen warnings.
 
-| Secret | Platform | Description |
+| Variable | Platform | Description |
 | --- | --- | --- |
 | `MAC_CSC_LINK` | macOS | base64 of the Developer ID Application `.p12` |
 | `MAC_CSC_KEY_PASSWORD` | macOS | password of the `.p12` |
@@ -131,12 +190,12 @@ src/
   renderer/   React UI (Monaco editor, tabs, console, panels)
   shared/     types and the magic-comment transform
 tests/        Vitest suite (dev only, safe to delete)
-build/        app icons
+build/        app icons and macOS entitlements
 ```
 
 ## Not affiliated
 
-WisfJS is an independent project. It is **not affiliated with, endorsed by, or
+JOTTER is an independent project. It is **not affiliated with, endorsed by, or
 sponsored by RunJS (Haas Labs Ltd) or any other product**. The name, logo and
 design are original to this project.
 

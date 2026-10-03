@@ -69,11 +69,11 @@ export function useRunner(): UseRunnerResult {
   }, [])
 
   useEffect(() => {
-    const offLog = window.wisfjs.onLog((log) => {
+    const offLog = window.jotter.onLog((log) => {
       const tabId = log.runId ? runIdToTab.current[log.runId] : undefined
       if (tabId) append(tabId, log)
     })
-    const offError = window.wisfjs.onError((error) => {
+    const offError = window.jotter.onError((error) => {
       const tabId = error.runId ? runIdToTab.current[error.runId] : undefined
       if (tabId) {
         append(tabId, {
@@ -84,7 +84,7 @@ export function useRunner(): UseRunnerResult {
         })
       }
     })
-    const offResult = window.wisfjs.onResult((result: RunResult) => {
+    const offResult = window.jotter.onResult((result: RunResult) => {
       const tabId = runIdToTab.current[result.id]
       if (tabId) patch(tabId, { running: false, duration: result.duration })
     })
@@ -132,7 +132,7 @@ export function useRunner(): UseRunnerResult {
         }
         browserRunId.current = runId
         const myRunId = runId
-        void window.wisfjs
+        void window.jotter
           .bundle({ code: request.code, language: request.language })
           .then((result) => {
             if (browserRunId.current !== myRunId) return
@@ -153,7 +153,7 @@ export function useRunner(): UseRunnerResult {
             }
           })
       } else {
-        window.wisfjs.run({
+        window.jotter.run({
           id: runId,
           code: request.code,
           language: request.language,

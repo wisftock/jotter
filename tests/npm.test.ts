@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { NpmManager } from '../src/main/npmManager'
 
-const dir = mkdtempSync(join(tmpdir(), 'wisfjs-npm-'))
+const dir = mkdtempSync(join(tmpdir(), 'jotter-npm-'))
 
 writeFileSync(
   join(dir, 'package.json'),
@@ -17,7 +17,7 @@ writeFileSync(
 )
 // pkg-b is declared but not installed on disk.
 
-const emptyDir = mkdtempSync(join(tmpdir(), 'wisfjs-npm-empty-'))
+const emptyDir = mkdtempSync(join(tmpdir(), 'jotter-npm-empty-'))
 
 afterAll(() => {
   rmSync(dir, { recursive: true, force: true })

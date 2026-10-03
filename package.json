@@ -1,25 +1,24 @@
 {
-  "name": "wisfjs",
+  "name": "jotter",
   "version": "0.1.0",
   "description": "A fast, free, open-source desktop scratchpad for JavaScript, TypeScript, JSX and TSX with Node.js and browser runtimes, npm packages and snippets.",
-  "homepage": "https://gitlab.com/your-namespace/wisfjs",
+  "homepage": "https://gitlab.com/wisftock/jotter",
   "author": {
-    "name": "WisfJS Maintainers",
-    "email": "maintainers@wisfjs.app"
+    "name": "wisftock"
   },
   "maintainers": [
-    "WisfJS Maintainers <maintainers@wisfjs.app>"
+    "wisftock"
   ],
   "license": "MIT",
   "private": true,
   "main": "./out/main/index.js",
-  "desktopName": "wisfjs.desktop",
+  "desktopName": "jotter.desktop",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/your-namespace/wisfjs.git"
+    "url": "https://gitlab.com/wisftock/jotter.git"
   },
   "bugs": {
-    "url": "https://gitlab.com/your-namespace/wisfjs/-/issues"
+    "url": "https://gitlab.com/wisftock/jotter/-/issues"
   },
   "scripts": {
     "dev": "electron-vite dev",
@@ -64,9 +63,9 @@
     "vitest": "^5.0.3"
   },
   "build": {
-    "appId": "app.wisfjs.desktop",
-    "productName": "WisfJS",
-    "copyright": "Copyright © 2026 WisfJS Maintainers",
+    "appId": "app.jotter.desktop",
+    "productName": "JOTTER",
+    "copyright": "Copyright © 2026 JOTTER Maintainers",
     "directories": {
       "output": "release",
       "buildResources": "build"
@@ -86,7 +85,7 @@
       ],
       "category": "Development",
       "icon": "build/icon.png",
-      "maintainer": "WisfJS Maintainers <maintainers@wisfjs.app>",
+      "maintainer": "JOTTER Maintainers <maintainers@jotter.app>",
       "synopsis": "JavaScript playground for your desktop",
       "syncDesktopName": true
     },

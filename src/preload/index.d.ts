@@ -1,8 +1,8 @@
-import type { WisfJsApi } from './index'
+import type { JotterApi } from './index'
 
 declare global {
   interface Window {
-    wisfjs: WisfJsApi
+    jotter: JotterApi
   }
 }
 

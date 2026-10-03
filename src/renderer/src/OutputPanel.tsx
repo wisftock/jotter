@@ -42,7 +42,7 @@ export function OutputPanel({
         </button>
       </header>
       <div
-        id="wisfjs-webview"
+        id="jotter-webview"
         className={`webview-slot ${showWebView && env === 'browser' ? 'open' : ''}`}
       />
       <div className="output-body">

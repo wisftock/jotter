@@ -49,6 +49,6 @@ const api = {
   }
 }
 
-export type WisfJsApi = typeof api
+export type JotterApi = typeof api
 
-contextBridge.exposeInMainWorld('wisfjs', api)
+contextBridge.exposeInMainWorld('jotter', api)

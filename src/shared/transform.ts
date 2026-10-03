@@ -26,7 +26,7 @@ interface CommentInfo {
  *  - Expressions followed by a `//?` magic comment are logged with the chosen
  *    label and always shown, even when the value is `undefined`.
  *  - If the program ends with a declaration, its value is captured on
- *    `globalThis.__WISF_RESULT__`.
+ *    `globalThis.__JOTTER_RESULT__`.
  *
  * If the code cannot be parsed the original source is returned untouched.
  */
@@ -81,7 +81,7 @@ export function transformCode(code: string): string {
     const custom = comment.text.slice(1).trim()
     // Only show a label when the magic comment has custom text.
     const labelArg = custom.length ? JSON.stringify(custom) : 'undefined'
-    const logCall = `globalThis.__WISF_LOG__(( ${exprSrc} ), ${labelArg})`
+    const logCall = `globalThis.__JOTTER_LOG__(( ${exprSrc} ), ${labelArg})`
 
     if (target.type === 'ExpressionStatement') {
       replaced.push({ start: target.start, end: target.end, code: logCall })
@@ -100,7 +100,7 @@ export function transformCode(code: string): string {
     replaced.push({
       start: node.start,
       end: node.end,
-      code: `globalThis.__WISF_LOG__(( ${src} ), undefined, true)`
+      code: `globalThis.__JOTTER_LOG__(( ${src} ), undefined, true)`
     })
   }
 
@@ -114,7 +114,7 @@ export function transformCode(code: string): string {
       replaced.push({
         start: last.start,
         end: last.end,
-        code: `${original}; globalThis.__WISF_RESULT__ = ( ${src} )`
+        code: `${original}; globalThis.__JOTTER_RESULT__ = ( ${src} )`
       })
     }
   }

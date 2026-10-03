@@ -27,7 +27,7 @@ class Harness {
   }
 }
 
-const workspace = mkdtempSync(join(tmpdir(), 'wisfjs-exec-'))
+const workspace = mkdtempSync(join(tmpdir(), 'jotter-exec-'))
 mkdirSync(join(workspace, 'node_modules', 'fake-pkg'), { recursive: true })
 writeFileSync(
   join(workspace, 'node_modules', 'fake-pkg', 'package.json'),
