@@ -1,0 +1,42 @@
+name: Version
+
+# Manually bump the version, commit it and push the tag. Pushing the tag then
+# triggers the Release workflow, which builds and publishes the artifacts.
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump
+        type: choice
+        required: true
+        default: patch
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version and tag
+        run: 'npm version ${{ inputs.bump }} -m "chore(release): %s"'
+
+      - name: Push commit and tag
+        run: git push --follow-tags

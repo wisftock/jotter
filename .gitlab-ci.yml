@@ -1,0 +1,95 @@
+stages:
+  - check
+  - package
+  - release
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
+
+default:
+  image: node:22
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+
+# Type-check, test and build on every push / MR.
+check:
+  stage: check
+  script:
+    - npm ci
+    - npm run typecheck
+    - npm test
+    - npm run build
+
+# Linux packages (AppImage). Runs automatically on tags.
+package:linux:
+  stage: package
+  script:
+    - npm ci
+    - npm run build:linux:appimage
+  artifacts:
+    name: "wisfjs-linux-$CI_COMMIT_REF_NAME"
+    paths:
+      - release/*.AppImage
+    expire_in: 1 month
+  rules:
+    - if: $CI_COMMIT_TAG
+    - when: manual
+      allow_failure: true
+
+# The following two jobs need self-hosted runners tagged "windows" / "macos".
+package:windows:
+  stage: package
+  tags:
+    - windows
+  script:
+    - npm ci
+    - npm run build:win
+  artifacts:
+    paths:
+      - release/*.exe
+    expire_in: 1 month
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: manual
+      allow_failure: true
+
+package:macos:
+  stage: package
+  tags:
+    - macos
+  script:
+    - npm ci
+    - npm run build:mac
+  artifacts:
+    paths:
+      - release/*.dmg
+    expire_in: 1 month
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: manual
+      allow_failure: true
+
+# Creates a GitLab Release for the tag.
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - echo "Creating release $CI_COMMIT_TAG"
+  release:
+    tag_name: "$CI_COMMIT_TAG"
+    name: "WisfJS $CI_COMMIT_TAG"
+    description: "WisfJS $CI_COMMIT_TAG"
