@@ -38,6 +38,25 @@ writeFileSync(
   'module.exports = { double: (n) => n * 2 }'
 )
 
+// A minimal React stand-in providing the JSX runtimes. Using CJS named
+// exports keeps Node's ESM interop happy without pulling a real dependency.
+mkdirSync(join(workspace, 'node_modules', 'react'), { recursive: true })
+writeFileSync(
+  join(workspace, 'node_modules', 'react', 'package.json'),
+  JSON.stringify({ name: 'react', version: '1.0.0', main: 'index.js' })
+)
+writeFileSync(
+  join(workspace, 'node_modules', 'react', 'jsx-runtime.js'),
+  'exports.jsx = (type, props) => ({ type, props })\n' +
+    'exports.jsxs = (type, props) => ({ type, props })\n' +
+    "exports.Fragment = 'Fragment'\n"
+)
+writeFileSync(
+  join(workspace, 'node_modules', 'react', 'jsx-dev-runtime.js'),
+  'exports.jsxDEV = (type, props) => ({ type, props })\n' +
+    "exports.Fragment = 'Fragment'\n"
+)
+
 let harness: Harness
 let executor: Executor
 
@@ -78,6 +97,25 @@ describe('Executor', () => {
   it('supports top-level await', async () => {
     await run('const value = await Promise.resolve(20)\nvalue + 1')
     expect(harness.logs().at(-1)?.text).toBe('21')
+  })
+
+  it('runs JSX using the automatic runtime', async () => {
+    await run('const el = <h1 id="t">Hi</h1>\nel.type + ":" + el.props.id', 'jsx')
+    expect(harness.logs().at(-1)?.text).toBe('h1:t')
+    expect(harness.result()).toMatchObject({ ok: true })
+  })
+
+  it('runs TSX after stripping types and JSX', async () => {
+    await run(
+      'interface Props { name: string }\nconst el = <span>{nameFromProps()}</span>\nfunction nameFromProps(): string { return "Jotter" }\nel.props.children',
+      'tsx'
+    )
+    expect(harness.logs().at(-1)?.text).toBe('Jotter')
+  })
+
+  it('runs JSX with a fragment', async () => {
+    await run('const el = <><b>a</b></>\nel.type', 'jsx')
+    expect(harness.logs().at(-1)?.text).toBe('Fragment')
   })
 
   it('resolves packages with require() from the workspace', async () => {

@@ -76,7 +76,7 @@
       "!**/*.map"
     ],
     "asarUnpack": [
-      "node_modules/npm/**"
+      "node_modules/**"
     ],
     "linux": {
       "target": [

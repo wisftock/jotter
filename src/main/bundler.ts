@@ -1,7 +1,22 @@
-import * as esbuild from 'esbuild'
 import { transformCode } from '../shared/transform'
 import { transpile } from './transpile'
+import { setupEsbuildBinaryPath } from './esbuildBinary'
 import type { BundleResult, Language } from '../shared/types'
+
+/**
+ * esbuild reads ESBUILD_BINARY_PATH when the module is first evaluated, so the
+ * packaged binary path must be configured before the module is required. The
+ * import is therefore lazy: a top-level import would be hoisted above the
+ * setup call by the bundler.
+ */
+let esbuildModule: typeof import('esbuild') | null = null
+function loadEsbuild(): typeof import('esbuild') {
+  if (!esbuildModule) {
+    setupEsbuildBinaryPath()
+    esbuildModule = require('esbuild') as typeof import('esbuild')
+  }
+  return esbuildModule
+}
 
 function missingPackageFromMessage(message: string): string | undefined {
   const match = /Could not resolve "([^"]+)"/.exec(message)
@@ -29,6 +44,7 @@ export async function bundleForBrowser(
   workspace: string
 ): Promise<BundleResult> {
   try {
+    const esbuild = loadEsbuild()
     const js = transformCode(transpile(code, language))
     const result = await esbuild.build({
       stdin: {
